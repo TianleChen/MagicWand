@@ -17,7 +17,7 @@ import subprocess
 
 # initializing Picamera
 camera = PiCamera()
-camera.framerate = 33
+camera.framerate = 90
 camera.resolution = (640, 480)
 rawCapture = PiRGBArray(camera, size = (640, 480))
 
@@ -71,7 +71,7 @@ def last_frame(img):
     cv2.imwrite("/home/pi/Desktop/lastframe4.jpg", img)
     img = cv2.dilate(img, (3, 3))
     cv2.imwrite("/home/pi/Desktop/lastframe.jpg", img)
-    output = subprocess.check_output(['python3', '/home/pi/Desktop/HarryPotterWandsklearn.py'])
+    #output = subprocess.check_output(['python3', '/home/pi/Desktop/HarryPotterWandsklearn.py'])
     print(output[1])
     if output[1] == "0":
         print("Alohamora!!")
@@ -100,8 +100,8 @@ for image in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
         frame_with_keypoints = cv2.drawMarker(frame_with_keypoints, tuple(int(i) for i in marker.pt), color=(0, 255, 0))
 
     #starting and ending circle
-    frame_with_keypoints = cv2.circle(frame_with_keypoints, (140, 70), 6, (0, 255, 0), 2)
-    frame_with_keypoints = cv2.circle(frame_with_keypoints, (190, 140), 6, (0, 0, 255), 2)
+    #frame_with_keypoints = cv2.circle(frame_with_keypoints, (140, 70), 6, (0, 255, 0), 2)
+    #frame_with_keypoints = cv2.circle(frame_with_keypoints, (190, 140), 6, (0, 0, 255), 2)
 
 
     #points_array = cv2.KeyPoint_convert(keypoints)
@@ -124,8 +124,8 @@ for image in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
                 flag = 1    
 
                 
-    cv2.imshow("video",frame_with_keypoints)
-    cv2.imshow("video 2",frame)
+    #cv2.imshow("video",frame_with_keypoints)
+    #cv2.imshow("video 2",frame)
     rawCapture.truncate(0)
     key = cv2.waitKey(1) & 0xFF
     if key == ord('q'):
