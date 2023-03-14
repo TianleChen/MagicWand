@@ -1,3 +1,6 @@
+# For mouse control
+from pynput.mouse import Button, Controller
+
 # For camera module
 from picamera import PiCamera
 from picamera.array import PiRGBArray
@@ -24,6 +27,8 @@ rawCapture = PiRGBArray(camera, size = (640, 480))
 #servo = GPIO.PWM(12, 50)
 #servo.start(0)
 
+# Init mouse
+mouse = Controller()
 
 # Define parameters for the required blob
 params = cv2.SimpleBlobDetector_Params()
@@ -50,6 +55,7 @@ detector = cv2.SimpleBlobDetector_create(params)
 
 
 flag = 0
+cnt = 0
 points = []
 lower_blue = np.array([255, 255, 0])
 upper_blue = np.array([255, 255, 0])
@@ -59,7 +65,7 @@ def last_frame(img):
     cv2.imwrite("/home/pi/Desktop/lastframe1.jpg", img)
     img = cv2.GaussianBlur(img, (5, 5), 0)
     cv2.imwrite("/home/pi/Desktop/lastframe2.jpg", img)
-    retval, img = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)
+    retval, img = cv2.threshold(img, 64, 255, cv2.THRESH_BINARY)
     cv2.imwrite("/home/pi/Desktop/lastframe3.jpg", img)
     img = cv2.resize(img, (28, 28), interpolation=cv2.INTER_AREA)
     cv2.imwrite("/home/pi/Desktop/lastframe4.jpg", img)
@@ -101,31 +107,20 @@ for image in camera.capture_continuous(rawCapture, format='bgr', use_video_port=
     #points_array = cv2.KeyPoint_convert(keypoints)
     points_array = cv2.KeyPoint_convert(keypoints)
 
-
-
     if flag == 1:
-        # Get coordinates of the center of blob from keypoints and append them in points list
-        points.append(points_array[0])
-
-
-        # Draw the path by drawing lines between 2 consecutive points in points list
-        for i in range(1, len(points)):
-            cv2.line(frame_with_keypoints, tuple(points[i-1]), tuple(points[i]), (255, 255, 0), 3)
-
+        time.sleep(0.001)
+        flag = 0
 
     if len(points_array) != 0:
-
-        if flag == 1:
-            if int(points_array[0][0]) in range(185, 195) and int(points_array[0][1]) in range(135, 145):
-                print("Tracing Done!!")
-                frame_with_keypoints = cv2.inRange(frame_with_keypoints, lower_blue, upper_blue)
-                last_frame(frame_with_keypoints)
-                break
-
         if flag == 0:
-            if int(points_array[0][0]) in range(135, 145) and int(points_array[0][1]) in range(65, 75):
+            if int(points_array[0][0]) in range(0, 255) and int(points_array[0][1]) in range(0, 255):
                 time.sleep(0.5)
-                print("Start Tracing!!")
+                #print("Start Tracing!!")
+                print("Detected!!")
+                print(cnt)
+                cnt += 1
+                mouse.press(Button.left)
+                mouse.release(Button.left)
                 flag = 1    
 
                 
